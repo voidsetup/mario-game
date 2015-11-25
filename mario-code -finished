@@ -1,0 +1,793 @@
+final int screenWidth = 512;
+final int screenHeight = 432;
+
+void initialize() {
+  addScreen("level", new MarioLevel(width, height));
+}
+
+class MarioLevel extends Level{
+  MarioLevel(float levelWidth, float levelHeight) {
+    super(levelWidth, levelHeight);
+    addLevelLayer(layer, new MarioLayer(this));
+  }
+}
+
+class MarioLayer extends LevelLayer {
+  MarioLayer(level owner) {
+    super(owner);
+    setBackGroundColor(color(0, 100, 190));
+    addboundary(new boundary(0,height-48,width,height-48));
+    showBoundaries = true;
+  }
+
+class Mario extends Player {
+  Mario(float x, float y) {
+    setupStates();
+    setPositions(x,y);
+  }
+  void setupStates() {
+    addState(new State("idle", "graphics/mario/small/Standing-mario.gif"));
+    addState(new State("running", "graphics/mario/small/running-mariogif",1,4));
+    addState(new State("jumpping", "graphics/mario/small/jumpping-mario.gif"));
+    addState(new State("dead", "graphics/mario/small/dead-mario.gif",1,2));
+    setCurrenetState("idle");
+  }
+}
+
+class MarioLayer extends LevelLayer {
+  marioLayer(Level owner) {
+    super(owner);
+    setBackgroundColor(color(0, 100, 190));
+    addBoundary(new Boundary(0,height-48,width,height-48));
+    showBoundaries = true;
+    Mario mario = new Mario(width/2, height/2);
+    addPlayer(mario);
+  }
+}
+
+float DOWN_FORCE =2;
+float ACCELERATION = 1.3;
+float DAMPENING = 0.75;
+
+Mario(float x, float y) {
+  super("Mario");
+  setupStates();
+  setPositions(x,y);
+  setForces(0,DOWN_FORCE);
+  setAcceleration(0,ACCELERATION);
+  setImpulseCoefficients(DAMPENING,DAMPENING);
+}
+Mario(float x, float y) {
+  super("Mario");
+  setupStates();
+  setPosition(x,y);
+  handleKey('W');
+  handleKey('A');
+  handleKey('D');
+  setForces(0,DOWN_FORCE);
+  setAcceleration(0,Acceleration);
+  setImpulseCoefficients(DAMPENING,DAMPENING);
+}
+
+
+
+void HandleInput() {
+  if (isKeyDown('A')) { addImpulse(-2,0); }
+  if (isKeyDown('D')) {addImpulse(2,0);}
+  if (isKeyDown('W')) {addImpulse(0,-10); }
+}
+
+void handelImput() {
+  //handle runnig
+  if(isKeyDown('A') || isKeyDown('D')) {
+    if (isKeyDown('A')) {
+      setHoizontalFlip(true);
+      addImpules(2, 0);
+    }
+    setCurrentState("running");
+  }
+  
+  //handle Jumpping
+ if(isKeyDown('W') && active.name!="jumping" && boundaries.size()>0) {
+   addImpulse(0,-35);
+   setCurrentState("jumpping");
+ }
+ 
+ if(!isKeyDown('A') && !isKeyDown('D') && ! isKeyDown('W')) {
+   setCurrentState("idle");
+ }
+}
+void initialize() {
+  addScreen("level", new MarioLevel(width, height));
+  frameRate(30);
+}
+
+void setupStates() {
+
+  State jumping = new State("jumping", "graphighs/mario/small/Jumping-mario.gif");
+  jumping.setDuration(15);
+  addState(jumping);
+  
+  setCurrentState("idle");
+}
+
+void handleInput() {
+  if(isKeyDown('A') || isKeyDown('D')) {
+
+    //we remove setCurrentState("running") here!
+  }
+  
+  if(isKeyDown('W') && active.name!="jumping" && boundaries.size()>0) {
+
+  }
+  
+ if (ative.mayChange()) {
+   if(isKeyDown('A') || isKeyDown('D')) {
+     setCurrentState("running");
+   }
+ }
+
+class MarioLayer extends LevelLayer {
+  MarioLayer(Level owner) {
+    super(owner);
+    
+    setBackgroundColor(color(0, 100, 190));
+    Sprite Background_Picture = new tilingSpite(background_picture,0,0,width,height);
+    addBackgroundSprite(background);
+    
+    addboundary(new Boundary(0,height-48,width,height-48));
+    showBoundaries = true;
+    Mario mario = new mario(width/4, height/2);
+    addPlayer(mario);
+  }
+}
+
+class MarioLayer extends LevelLayer {
+  MarioLayer(Level owner) {
+    addBoundary(new Boundary(0,height-48, width,height-48));
+    addBoundary(new Boundary(-1,0, -1,height));
+    addBoundary(new Boundary(width+1,height, width+1,0));
+    showBoundaries = true;
+  }
+}
+
+void initialize() {
+  frameRate (30);
+  addScreen("Level", new MarioLevel(2*width, height));
+}
+
+class MarioLevel extends Level {
+  MarioLevel(float levelWidth, levelHeight); {
+    addLevelLayer("layer", new  MarioLayer(this));
+    setVewBox(0,0,screenWidth,screenHeight);
+  }
+}
+
+class marioLayer extendsLevelLayer {
+  Mario mario;
+  
+  MarioLayer(Level owner) {
+    [...]
+    mario = new Mario(width/4, height/2);
+    addPlayer(mario);
+  }
+  
+  void draw() {
+    super.draw();
+    veiwbox.trak(parent, mario);
+  }
+}
+
+class MarioLayer extends LevelLayer {    // ground
+  [...]
+  
+  void addGround(float x1, float y1, float x2, float y2){
+    Sprite grassy = new Sprite("graphics/backgrounds/ground-top.gif");
+    TilingSprite groundline = new TilingSprite(grassy, x1,y1,x2,y1+16);
+    addBackgroundSprite(groundfiller);
+    
+    Sprite filler = new Sprite("graphics/backgrounds/ground-filler.gif");
+    TilingSprite groundfiller = new TilingSprite(filler, x1,y1+16,x2,y2);
+    addBackgroundsSprite(groundfiller);
+    
+    addBoundary(new Boundary(x1,y1,x2,y1));
+  }
+}
+
+class MarioLayer extends LevelLayer { //mario walks on the ground
+  [...]
+  
+  MarioLayer(Level owner) {
+    [...]
+    addGround(-32,height,-48, width+32,height);
+  }
+  
+  [...]
+}
+
+class MarioLevel extends Level {   // parallax
+  MarioLevel(float levelWidth, float levelHeight) {
+    [...]
+    addLevelLayer("background", new BackgroundLayer(this));
+  }
+}
+
+class BackgroundLayer extends LevelLayer {
+  BackgroundLayer(Level owner) {
+    super(owner, owner.width, owner.height, 0,0,0.75,0.75);
+    setBackgroundColor(color(0, 100, 190));
+    addBouckgroundSprite(new TilingSprite(new Sprtie("graphics/backgrounds/sky_2.gif"),0,0,width,height));
+  }
+}
+
+class MarioLayer extends LevelLayer {
+  Mario mario;
+  
+  MarioLayer(Level owner) {
+    super(owner);
+    //we nolonger have background color in the main levellayer now
+    addBackgroundSprite(new TilingSprite(new Sprite("graphics/backgrounds/skay.gif"),0,0,width,.height));
+    [...]
+  }
+  
+  [...]
+}
+
+class MarioLayer extends LevelLayer {  // Platforms!
+  [...]
+  
+  MarioLayer(Level owner) {
+    [...]
+    
+    // add a few slanted hills
+    addSlant(256, height-48);
+    addSlant(1300, height-48);
+    addSlant(1350, height-48);
+  }
+  
+  [...]
+  
+  void addSlant(float x, float y) {    //slanty platform
+    Sprite groundslant = new Sprite("graphics/backgrounds/grounds-slant.gif");
+    groundslant.align(LEFT,BOTTOM);
+    addslant.setPostion(x, y);
+    addBoundary(new Boundary(x, y + 48 -groundslant.height, x + 48, y groundslant.height));
+  }
+}
+
+class MarioLayer extendes LevelLayer {  // flat platforms
+  [...]
+  
+  MarioLayer(level owner) {
+    [...]
+    
+    //add some ground platforms
+    addGroundPlatform(928, height,-224, 96, 112);
+    addGroundplatform(920, height,-176, 32, 64);
+    addGroundplatform(912, height-128, 128, 80);
+    addGroundPlatform(976, height-96, 128, 48);
+    addGroundPlatform(1442, height-128, 128, 80);
+    addGroundPlatform(1442+64, height-96, 128, 48);
+  }
+  
+  [...]
+   void addGroungPlatform(float x, float y, float w, float h) {
+     //creat our topsoil Layer
+     Sprite lc = new Sprite("graphics/backbrounds/"+tileset+"-corner- left.gif");
+     lc.align( LEFT, TOP);
+     lc.setPosition(x, y);
+     Sprite tp = new Sprite("graphics/backgrounds/ground-top.gif");
+     Sprite rc = new Sprite("graphics/backgrounds/ground-corner-right.gif");
+     rc.align(LEFT, TOP);
+     rc.setPosition(x+w-rc.width,y);
+     TilingSprite toProw =newTilingSprite(tp, x+lc.width, y, x+(w-rc.width), y+tp.height);
+     
+     addBackgroundSprite(lc);
+     addBackgroundSprite(toprow);
+     adBackgroud(rc);
+     
+     //sides/filler
+     TilingSprite sideleft = new TilingSprite(new Sprite("graphics/backgrounds/ground-side-left.gif"),
+                                             x,            y+tp.height, x+lc.width,     y+h);
+     TilingSprite filler = new Tiling Sprite(new Sprite("graphics/backgrounds/ground-filler.gif"),
+                                             x+lc.width,   y+tpheight, x+(w-rc.width), y+h);
+     TilingSprite sideright = new TilingSprite(new Sprite("grapics/backgrounds/ground-side-right.gif"),
+                                               x+w-rc.width, y+tp.height, x+w,           y+h);
+     
+     addBackgroundSprite(sideleft);
+     addBackgroundSprite(filer);
+     addBackgroundSprite(sideright); 
+     
+     //boundary to walk on 
+     addBoundary(new Boundary(x, y, x+w, y));
+   }
+}
+
+class MarioPickup extends Pickup {   //coins
+  MarioPickup(String name, sting spritesheet, int rows, int columns,float x, float y, boolean visible) {
+    super(name, spritesheet, rows, columns, x, y, visible);
+  }
+}
+// the regular coin pickup
+class Coin extends MarioPickup {
+  Coin(float x, float y) {
+    super("Regular coin", "graphics/assorted/Regular-coin.gif", 1, 4, x, y, true);
+  }
+}
+
+//the dragon coin
+class DragonCoin extends MarioPickup {
+   DragonCoin(float x, float y) {
+     super("Dagon coin", " graphics/assorted/Dragon-coin.gif", 1, 4, x, y, true);
+   }
+}
+
+class MarioLayer extends LevelLayer {
+  [...]
+  
+  //add coints above the horizontal platforms
+  addCoins(928,height-265,96);
+  addCoins(912,height-140,128);
+  addCoins(1442,height-140,128);
+  
+  //add a dragon coin at the start
+  addForPlayerOnly(new DragonCoin(352,height-164));
+}
+
+// a handy function for placing a shit ton of coins
+void addCoins(float x, float y, float w) {
+  float step = 16, i = 0, last= w/step;
+  for(i=0; i
+   addForPlayerOnly(new Coin(x+8+i*step,y));
+  } 
+ }
+}
+
+class Koopa extends Interactor {
+  //we construct a Koopa trooper pretty much the same way we made mario
+  Koopa(float x, float y) {
+    setStates();
+    setForces(-0.25,DOWN_FORCE);set impulseCoefficients(DAMPENING,DAMPENING);
+    setPositions(x,y);
+  }
+  
+  //And we use states
+  void setStates() {
+    //walking state
+    State walking = new State("idle", "graphics/enemies/Red-koopa-walking.gif", 1,2);
+    walking.setAnimationSpeed(0.12);
+    addState(walking);
+  }
+}
+
+class MarioLayer extends LevelLayer {
+  [...]
+  MarioLayer(Level owner) {
+    [...]
+    
+    Koopa koopa + new Koopa(264, height-178);
+    addInteractor(koopa);
+  }
+}
+
+class Koopa extends Interactor {
+  [...]
+  
+  void gotBlocked(Boundary b, float[] intersections) {
+    //is the boundary vertical?
+    if (b.x == b.xw) {
+      // yes it is. Reverse direction!
+      fx == fx;
+      setHorizontalFlip(fx > 0);
+    }
+  }
+}
+
+class Mario extends Player {
+  [...]
+  
+  void setupStates() {
+    [...]
+    
+    State dead = new State("dead", "graphics/mario/small/Dead-mario.gif", 1, 2);
+    dead.setAnimationSpeed(0.25);
+    dead.setDuration(15)
+    addState(dead);
+    
+    [...]
+  }
+  
+  // what happens when we touch another player or NPC?
+  void overlapOccurredWith(Actor other, float[ ] direction) {
+    //for a moment, we onky care what happens
+    //whe we touch Kooopa troopers
+    if(other instanceof Koopa) {
+      //if we touch a koopa trooper, we die O_O
+      die();
+    }
+  }
+  
+  void die() {
+    //switch to dead state 
+    setCurrentState("dead");
+    //turn off interaction, so we don't flag more touching koopas or pickups or walls, etc.
+    setInteracting(false);
+    //make up in an "oh no!" fashion
+    addImpulse(0,-30);
+    // and turn up gravity so we fall faster than normal.
+    setForces(0,3);
+  }
+}
+
+[...]
+
+void reset/90 {
+  clearSreens();
+  addScreen("level", new MarioLevel(4*width, height));
+}
+
+[...]
+
+class Mario extends Player {
+  [...]
+  
+  void handleStateFinished(State which) {
+    if(which.name == "dead") {
+      removeActor();
+      reset();
+    } else {
+      setCurrentState("idle");
+    }
+  }
+  
+  [...]
+}
+
+class Mario extends Player {
+  [...]
+  
+  void overlapOccurredWith(Actor other, float [] direction) {
+    if (other instanceof Koopa) {
+      // get a reference to the koopa trooper
+      Koopa koopa =(Koopa) other;
+      
+      //get the angle at which we've impacted with this koopa trooper
+      float angle = directions[2]; 
+      
+      //now to find out whether we bopped a koopa on the head!
+      float tolerance = radians(75);
+      if (if (PI/2 - tolerance <= angle && angle <= PI/2 + tolerance) {
+        //we hit it from above!
+        //1) squishthe koopa tooper
+        koopa.squish();
+        //stop moving in whichever direction we were moving in
+        stop(0, 0);
+        // insted, jump up!
+        setImpulse(0, -30);
+        setCurrentState("jumping");
+      }
+      
+      //if we didn't hit it at the correct angle,we still die =(
+      else {die() }
+    }
+  }
+  
+  [...]
+}
+
+class Koopa extends Interactor {
+  [..]
+  
+  Vois setStates() {
+    //walking state
+    State walking = new State("idle", "graphics/enemies/Red-koopa-walking.gif", 1, 2);
+    noshell. setAnimationSpeed(0.12);
+    addState(noshell);
+    
+    setCurrentState("idle");
+  }
+  
+  [...]
+ 
+  void squish() {
+    // do we have our shell? then we only get half squished.
+    if (active.name != "noshell") {
+      setCurrentState("noshell");
+      return;
+    }
+    // no shell... this koopa is toast
+    revoveActor();
+  }
+}
+
+class MarioLayer extends LevelLayer {
+  [...]
+  
+  MarioLayer(Level owner) {
+    [...]
+    
+    // and lets add the thing that makes us win!
+    addGoal(1920, height-48);
+  }
+  
+  void addGoal(float xpos, float hpos) {
+    // add the back postto the background images
+    Sprite Back_post = new Sprite("graphics/assorted/Goals=-back.gif");
+    back_post.align(CENTER,BOTTOM);
+    back_post.setPosition(xpos, hpos);
+    addBackgoundSprite(back_post);
+    
+    // and add the frount post to the foreground images
+    Sprite front_post = new Sprite("graphics/assorted/Goal-front.gif");
+    front_post.align(CENTER, BOTTOM);
+    front_post.setPosition(frount_post);
+    
+    // the finish line rop
+    addForPlyerOnly(new Rope(xpos, hpos-16));
+  }
+}
+
+class Rope extends MarioPickup {
+  Rope(float x, float y) {
+    //use the right picture for our rope
+    super("Finish line", "graphics/assorted/Goal-slider.gif", 1, 1 x, y, true);
+    
+    //now, set up the "up and down" animation for this pickup
+    Sprite rope_sprite =getState("finish line").sprite;
+    rope_sprite.align(LEFT,TOP);
+    
+    // there are two paths: up, and down, First, up;we move 116 pixels up, over 50 frames
+    rope-sprite.addPathLine(0, 0,      1,1,0    0,-116,   1,1,0,   50);
+    
+    //and then down: we move the same 116 pixels down, over 50 frames
+    rope_spite.addPathLine(0, -116,   1,1,0,   0, 0,      1,1,0,    50);
+  
+    //then, make that we keep "playing" this
+    // animation, and make sure we don't try to
+    // "drive along the path", because that wouls
+    // look really weird.
+    rope_sprite.setNoRotation(true);
+    rope_sprite.setLooping(true);
+  }
+}
+
+class Mario extends Player {
+  [...]
+  
+  //add a winning statefor Mario. We'll make his victory last 15 frames.
+  State won = new State("won", "graphics/mario/small/Standing-mario.gif");
+  won.State("idel");
+}
+
+void handleStateFinished(State which) {
+  // we resetthe game not just if mario dies, but
+  // also if he's won and hiswinning state is "done":
+  if(which.name == "dead" || which.name == "won") {
+     romveActor();
+     reset();
+  } else {
+    setCurrentState("idle");
+  }
+}
+
+[...]
+
+Void pickeedUp(Pickup pickup) {
+  // when we pick up a rope, win!
+  if (pickup.name=="Finish line") {
+    setCurrentState("won");
+   }
+ }
+ 
+ [...]
+}
+
+class KoopaTrigger extends Trigger {
+  // these values will let us position a new Koopa when triggered
+  float koopa_x, koopa_y;
+  
+  //our constructor is pretty straight forward. The first four values
+  //are where the trigger is in the left, the last two where a new koopa
+  // should be made, relative to trigger.
+  KoopaTrigger(float x, float y, float w, float h, float _kxn float _ky) {
+    super("koopa" , x, y, w, h);
+    koopa_x = _kx;
+    koopa_y = _ky;
+  }
+  
+  // when Mario rns through the trigger, this function i automatically
+  //called by the game engine, and the instructions in it are run.
+  void run(LevelLayer layer, Actor actor, float[] intersection) {
+    //make a new Koopa trooper, relative to the trigger's position
+    Koopa k = mew Koopa(x+koopa_x, koopa_y);
+    //add this koopa trooper to the list of enemies for the layer the trigger is in
+    layer.addInrteractor(k);
+    // and remove this trigger so that 's not repeated. unless we want infinite koopas!
+    remove trigger();
+  }
+}
+
+class marioLayer extends LevelLayer {
+  [...]
+  
+  marioLayer(level owner) {
+    [...]
+    
+    addTrigger(new KoopaTrigger(412,0, 5,height, 350, height-64));
+    addTrigger(new KoopaTrigger(562,0, 5,height, 350, height-64));
+    addTrigger(new KoopaTrigger(916,0, 5,height, 350, height-64));
+    
+    //temporarly show triggers in our game:
+    showTriggers = true;
+  }
+}
+
+class MarioLayer extends LevelLayer {
+  [...]
+  
+  MarioLayer(Level owner) {
+    [...]
+    
+    mario = new Mario(32, height-64);
+    addPlayer(mario);
+    //add one and a half of the ground, rather than all of it in one go:
+    addGround("ground",-32,height-48, -32 + 17*32,height);
+    
+    //make sure there's a boundary on the exposed side!
+    addBoundary(new Boundray(-32 +17*32,height-48, -32 + 17*32,height));
+    
+    // and then add the second half, so that theres a gap in between
+    addGround("ground", -32 + 19*,height-48, width+32,height);
+    
+    //make sure theres a boundary on the exposed part too!
+    addBoundary(new Boundary(-32 + 19*32,height,_32 + 19*32,height-48));
+    
+    [...]
+  }
+  
+  [...]
+}
+
+class Muncher extends Interactor {
+  // constaucting a muncher is the same as marios or koopas
+  Muncher(floatx, float y) {
+    superPositions(x,y);
+    setupStates();
+  }
+  
+  void setupStates() {
+    //munchers only do one thing... munch!
+    State munch = new State("munch", "graphics/enemies/Muncher.gif", 1, 2);
+    munch.setAnimationSpeed(0.20);
+    addState(munch);
+  }
+   
+   void overlapOccureeedWidth(Actor other, float[] overlap {
+     //if some one runs into us... and that some one is mario... he dies O_O
+     if (other instanceof Mario) {
+       ((Mario)other).die();
+     }
+   }
+}
+
+class MarioLayer extends LevelLayer {
+  [...]
+  
+  MarioLayer(Level owner) {
+    [...]
+    
+    addGround("ground", -32,height-48, -32 + 17*32,height);
+    addBoundary(new Boundary(-32 + 17*32,height-48,-32 +17*32,height));
+    
+    addInteractor(new Muncher(521, height-8));
+    addInteractor(new Muncher(536, height-8));
+    addInteractor(new muncher(552, height-8));
+    addInteractor(new Muncher(567, height-8));
+    
+    addBoundary(new Boundary(-32 + 19*32,height,-32 + 19*32,height-48));
+    addGround("ground", -32 + 19*32,height-48, width+32,height);
+    
+    [...]
+  }
+  
+  [...]
+}
+
+class MainLevel extends Level {
+  MainLevel(float levelWidth, float levelHeight) {
+    super(levelWidth,  levelHeight);
+    addLevelLayer("backgroudlayer", new MainBackgroungLayer(this));
+    addLevelLayer("main layer",new MainLevelLayer(this));
+    setVeiwBox(0,0,screenWidth, screenHeight);
+    //add some Background music!
+    SoundManager.load(this, "audio/gb/overworld.mp3");
+    SoundManager.play(this);
+  }
+}
+
+class Mario extends Player {
+  [...]
+  
+  State dead = State("dead", "graphics/mario/small/Dead-mario.gif", 1, 2);
+  dead.setAnimationSpeed(0.25);
+  dead.setDuration(100);
+  addState(dead);
+  //sound effect associated with this state:
+  SoundManager.load(dead,"audio/dead mario.mp3");
+  
+  State jumping = new State("jumping", "graphics/mario/small/jumping-mario.gif");
+  jumping.setDuration(15);
+  addState(jumping);
+  //sound effect associated with this state:
+  Soundmanager.Load(jumping, "audo/Jump.mp3");
+  
+  [...]
+}
+
+void handleImput() {
+  [...]
+  if(isKeyDown('W') && active.name!="jumping" && boundaries.size()>0) {
+    addImpulse(0,-35);
+    setCurrentState("jumping");
+    //play our jump sound when we jump:
+    SoundManager.play(active);
+  }
+  
+  [...]
+}
+
+[...]
+
+void die() {
+  setCurrentState("dead");
+  setIpulse(false);
+  setForces(0,3);
+  // when we die, stop backgroud music
+  SoundManager.stop(giveLevelLayer().getLevel());
+  //and the play the sad music =(
+  SoundManager.play(active);
+ }
+
+[...]
+}
+
+class Koopa extends Imteractor {
+  [...]
+  
+  void setStates() {
+    State walking = new State("idle", "graphics/enemies/Red-koopa-walikng.gif", 1, 2);
+    walking.setAnimationSpeed(0.12);
+    //the only sound koopas can make while walking is "getting squished" sound
+   SoundManager.load(walking, "audio/Squish.mp3"); 
+   addState(walking);
+   
+   State noshell = new State("noshell", "graphics/enemies/Naked-koopa-walking.gif", 1, 2);
+   noshell.setAnimationSpeed(0.12);
+   //we make the same sound when we're squished a second time
+   SoundManager.load(noshell, "audio/Squished.mp3");
+   addState(noshell);
+   
+   setCurrentState("idle");
+  }
+  
+  [...]
+  
+  void sqish() {
+    //play the sqush sound, regardless of whether we loose our shell, or die
+    SoundManager.play(active);
+    
+    [...]
+  }
+}
+
+class Coin extends MarioPickup {
+  Coin(float x, float y) {
+    supper("regular coin", "graphics/assorted/Regular-coin.gif", 1 ,4 x, y, true);
+    //set up the clip to play when wegetPicked up
+    SoundManager.load(this, "audio/Coin.mp3");
+  }
+  void pickedUp() {
+    // play our "pick up" sound clip
+    SoundManager.play(thid);
+  }
+}   
